@@ -18,7 +18,16 @@ public class Schedule {
 	private String contents;
 
 	public Schedule(ScheduleRequestDto requestDto) {
+		this.title = requestDto.getTitle();
 		this.name = requestDto.getName();
 		this.contents = requestDto.getContents();
+		this.date = requestDto.getDate();
+	}
+
+	public void update(ScheduleRequestDto requestDto) {
+		this.title = requestDto.getTitle();
+		this.name = requestDto.getName();
+		this.contents = requestDto.getContents();
+		this.date = requestDto.getDate();
 	}
 }
