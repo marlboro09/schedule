@@ -1,5 +1,7 @@
 package com.sparta.schedule.dto;
 
+import java.util.Optional;
+
 import com.sparta.schedule.entity.Schedule;
 
 import lombok.Getter;
