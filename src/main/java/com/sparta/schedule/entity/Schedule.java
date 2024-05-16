@@ -12,22 +12,24 @@ import lombok.Setter;
 public class Schedule {
 	private Long id;
 	private String title;
+	private String contents;
 	private String name;
 	private String password;
 	private String date;
-	private String contents;
 
 	public Schedule(ScheduleRequestDto requestDto) {
 		this.title = requestDto.getTitle();
-		this.name = requestDto.getName();
 		this.contents = requestDto.getContents();
+		this.name = requestDto.getName();
+		this.password = requestDto.getPassword();
 		this.date = requestDto.getDate();
 	}
 
 	public void update(ScheduleRequestDto requestDto) {
 		this.title = requestDto.getTitle();
-		this.name = requestDto.getName();
 		this.contents = requestDto.getContents();
+		this.name = requestDto.getName();
+		this.password = requestDto.getPassword();
 		this.date = requestDto.getDate();
 	}
 }
