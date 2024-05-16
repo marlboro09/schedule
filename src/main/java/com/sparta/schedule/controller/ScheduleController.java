@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.schedule.dto.ScheduleRequestDto;
@@ -36,18 +37,31 @@ public class ScheduleController {
 	public List<ScheduleResponseDto> getSchedules() {
 		return scheduleService.getSchedules();
 	}
+
+	/**
+	 * 선택 스케줄 조회
+	 */
+	@GetMapping("/schedule/{id}")
+	public ScheduleResponseDto getScheduleById(@PathVariable Long id) {
+		return scheduleService.getScheduleById(id);
+	}
 	/**
 	 * 스케줄 수정
 	 */
 	@PutMapping("/schedule/{id}")
-	public long updateSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDto requestDto) {
-		return scheduleService.updateSchedule(id, requestDto);
+	public ScheduleResponseDto updateSchedule(
+		@PathVariable Long id,
+		@RequestParam String password,
+		@RequestBody ScheduleRequestDto requestDto) {
+		return scheduleService.updateSchedule(id, password, requestDto);
 	}
 	/**
      * 스케줄 삭제
      */
 	@DeleteMapping("/schedule/{id}")
-    public long deleteSchedule(@PathVariable Long id) {
-		return scheduleService.deleteSchedule(id);
+    public long deleteSchedule(
+		@PathVariable Long id,
+		@RequestParam String password) {
+		return scheduleService.deleteSchedule(id, password);
 	}
 }

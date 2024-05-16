@@ -34,14 +34,33 @@ public class ScheduleService {
 		//db조회
 		return scheduleRepository.findAllByOrderByDateDesc().stream().map(ScheduleResponseDto::new).toList();
 	}
+	@Transactional(readOnly = true)
+	public ScheduleResponseDto getScheduleById(Long id) {
+		Schedule schedule = findSchedule(id);
+		return new ScheduleResponseDto(schedule);
+	}
 	@Transactional
-	public long updateSchedule(Long id, ScheduleRequestDto requestDto) {
+	public ScheduleResponseDto updateSchedule(Long id, String password, ScheduleRequestDto requestDto) {
+		// 비밀번호 확인
+		if (!isValidPassword(id, password)) {
+			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+		}
+		// 일정 업데이트
 		Schedule schedule = findSchedule(id);
 		schedule.update(requestDto);
-		return id;
+		return new ScheduleResponseDto(schedule);
+	}
+	// 비밀번호 확인 메소드
+	private boolean isValidPassword(Long id, String password) {
+		Schedule schedule = scheduleRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("해당 일정을 찾을 수 없습니다."));
+		return schedule.getPassword().equals(password);
 	}
 
-	public long deleteSchedule(Long id) {
+	public long deleteSchedule(Long id, String password) {
+		if (!isValidPassword(id, password)) {
+			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+		}
 		Schedule schedule = findSchedule(id);
 		scheduleRepository.delete(schedule);
 		return id;
