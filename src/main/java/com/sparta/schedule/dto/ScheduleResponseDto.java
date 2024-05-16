@@ -1,7 +1,5 @@
 package com.sparta.schedule.dto;
 
-import java.util.Optional;
-
 import com.sparta.schedule.entity.Schedule;
 
 import lombok.Getter;
@@ -12,24 +10,14 @@ public class ScheduleResponseDto {
 	private String title;
 	private String contents;
 	private String name;
-	private String password;
 	private String date;
 
+	// 매개변수를 받는 생성자
 	public ScheduleResponseDto(Schedule schedule) {
 		this.id = schedule.getId();
 		this.title = schedule.getTitle();
 		this.contents = schedule.getContents();
 		this.name = schedule.getName();
-		this.password = schedule.getPassword();
 		this.date = schedule.getDate();
-	}
-
-	public ScheduleResponseDto(Long id, String title, String contents, String name, String password, String date){
-		this.id = id;
-        this.title = title;
-        this.contents = contents;
-        this.name = name;
-        this.password =  password;
-        this.date = date;
 	}
 }
