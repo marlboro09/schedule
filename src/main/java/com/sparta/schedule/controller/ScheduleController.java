@@ -16,6 +16,9 @@ import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.service.ScheduleService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "스케줄 관리", description = "스케줄을 등록, 조회, 수정, 삭제하실 수 있습니다")
 @RestController
 @RequestMapping("/api")
 public class ScheduleController {
