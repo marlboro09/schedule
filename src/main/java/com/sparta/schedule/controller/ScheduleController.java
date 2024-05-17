@@ -85,6 +85,9 @@ public class ScheduleController {
 				responseCode = "400",
 				description = "잘못된 요청입니다. id를 확인해주세요."
 			), @ApiResponse(
+				responseCode = "404",
+				description = "선택한 스케줄 정보를 찾을 수 없습니다."
+			), @ApiResponse(
 				responseCode = "500",
 				description = "서버 오류가 발생했습니다. 다시 시도하세요."
 			)
@@ -108,8 +111,11 @@ public class ScheduleController {
 			responseCode = "400",
 			description = "잘못된 요청입니다. id와 password를 확인해주세요."
 			), @ApiResponse(
-			responseCode = "403",
-			description = "접근 권한이 없습니다."
+			responseCode = "401",
+			description = "비밀번호가 일치하지 않습니다."
+			), @ApiResponse(
+			responseCode = "404",
+			description = "선택한 스케줄 정보를 찾을 수 없습니다."
 			), @ApiResponse(
 				responseCode = "500",
 				description = "서버 오류가 발생했습니다. 다시 시도하세요."
@@ -137,8 +143,17 @@ public class ScheduleController {
 			responseCode = "400",
 			description = "잘못된 요청입니다. id와 password를 확인해주세요."
 			), @ApiResponse(
+				responseCode = "401",
+				description = "비밀번호가 일치하지 않습니다."
+			), @ApiResponse(
 			responseCode = "403",
 			description = "접근 권한이 없습니다."
+			), @ApiResponse(
+				responseCode = "404",
+				description = "선택한 스케줄 정보를 찾을 수 없습니다."
+			), @ApiResponse(
+				responseCode = "409",
+				description = "이미 삭제된 스케줄입니다."
 			), @ApiResponse(
 				responseCode = "500",
 				description = "서버 오류가 발생했습니다. 다시 시도하세요."
