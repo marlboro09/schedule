@@ -38,6 +38,12 @@ public class ScheduleController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "스케줄 입력이 완료되었습니다."
+			), @ApiResponse(
+				responseCode = "400",
+				description = "스케줄 입력에 실패했습니다. 입력값을 확인해주세요."
+			), @ApiResponse(
+				responseCode = "500",
+				description = "서버 오류가 발생했습니다. 다시 시도하세요."
 			)
 		}
 	)
@@ -54,6 +60,9 @@ public class ScheduleController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "모든 스케줄이 호출되었습니다"
+			), @ApiResponse(
+				responseCode = "500",
+				description = "서버 오류가 발생했습니다. 다시 시도하세요."
 			)
 		}
 	)
@@ -72,6 +81,12 @@ public class ScheduleController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "선택한 스케줄이 호출되었습니다."
+			), @ApiResponse(
+				responseCode = "400",
+				description = "잘못된 요청입니다. id를 확인해주세요."
+			), @ApiResponse(
+				responseCode = "500",
+				description = "서버 오류가 발생했습니다. 다시 시도하세요."
 			)
 		}
 	)
@@ -89,6 +104,15 @@ public class ScheduleController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "스케줄 수정이 완료되었습니다"
+			), @ApiResponse(
+			responseCode = "400",
+			description = "잘못된 요청입니다. id와 password를 확인해주세요."
+			), @ApiResponse(
+			responseCode = "403",
+			description = "접근 권한이 없습니다."
+			), @ApiResponse(
+				responseCode = "500",
+				description = "서버 오류가 발생했습니다. 다시 시도하세요."
 			)
 		}
 	)
@@ -109,6 +133,15 @@ public class ScheduleController {
 			@ApiResponse(
 				responseCode = "200",
 				description = "스케줄이 삭제되었습니다"
+			), @ApiResponse(
+			responseCode = "400",
+			description = "잘못된 요청입니다. id와 password를 확인해주세요."
+			), @ApiResponse(
+			responseCode = "403",
+			description = "접근 권한이 없습니다."
+			), @ApiResponse(
+				responseCode = "500",
+				description = "서버 오류가 발생했습니다. 다시 시도하세요."
 			)
 		}
 	)
