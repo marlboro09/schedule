@@ -3,6 +3,7 @@ package com.sparta.schedule.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.schedule.dto.ScheduleRequestDto;
@@ -16,6 +17,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,6 +49,7 @@ public class Schedule {
 	private String date;
 
 	@Column(name = "createtime")
+	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private LocalDateTime time;
 
@@ -69,4 +73,5 @@ public class Schedule {
 		this.date = requestDto.getDate();
 		this.time = LocalDateTime.now();
 	}
+
 }
