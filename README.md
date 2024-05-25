@@ -9,7 +9,7 @@ Schedule관리 프로젝트
 💻 개발환경
 - Version : Java 17
 - IDE : IntelliJ
-- DB: MySQL 8.4.0
+- DB: MySQL 8.0.28
 - Tools : GitHub, Git
 - Framework : SpringBoot 3.2.5
 
