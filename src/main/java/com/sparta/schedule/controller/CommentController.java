@@ -22,7 +22,7 @@ public class CommentController {
 		this.commentService = commentService;
 	}
 
-	@PostMapping("/comment")
+	@PostMapping("/schedule/{id}/comment")
 	public CommentResponseDto createComment(@RequestBody CommentRequestDto requestDto) {
 		return commentService.createComment(requestDto);
 	}
