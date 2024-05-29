@@ -3,75 +3,101 @@ package com.sparta.schedule.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.sparta.schedule.dto.ScheduleRequestDto;
-import com.sparta.schedule.dto.ScheduleResponseDto;
-import com.sparta.schedule.dto.UpdateRequestDto;
+import com.sparta.schedule.dto.requestdto.ScheduleRequestDto;
+import com.sparta.schedule.dto.responsedto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.repository.ScheduleRepository;
 
 @Service
 public class ScheduleService {
-	private final ScheduleRepository scheduleRepository;
 
-	public ScheduleService(ScheduleRepository scheduleRepository) {
-		this.scheduleRepository = scheduleRepository;
-	}
+	@Autowired
+	private ScheduleRepository scheduleRepository;
 
-	/**
-	 * 스케줄 등록
-	 */
 	public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
-		Schedule schedule = new Schedule(requestDto);
+		Schedule schedule = new Schedule();
+		schedule.setTitle(requestDto.getTitle());
+		schedule.setContent(requestDto.getContent());
+		schedule.setManager(requestDto.getManager());
+		schedule.setPassword(requestDto.getPassword());
+		schedule.setCreatedDate(requestDto.getCreatedDate());
+
 		Schedule savedSchedule = scheduleRepository.save(schedule);
-		return new ScheduleResponseDto(savedSchedule);
+
+		ScheduleResponseDto responseDto = new ScheduleResponseDto();
+		responseDto.setId(savedSchedule.getId());
+		responseDto.setTitle(savedSchedule.getTitle());
+		responseDto.setContent(savedSchedule.getContent());
+		responseDto.setManager(savedSchedule.getManager());
+		responseDto.setCreatedDate(savedSchedule.getCreatedDate());
+
+		return responseDto;
 	}
 
-	public List<ScheduleResponseDto> getSchedules() {
-		// DB 조회
-		return scheduleRepository.findAllByOrderByDateDesc().stream()
-			.map(ScheduleResponseDto::new)
-			.collect(Collectors.toList());
+	public ScheduleResponseDto getSchedule(Long id) {
+		Schedule schedule = scheduleRepository.findById(id)
+			.orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+		ScheduleResponseDto responseDto = new ScheduleResponseDto();
+		responseDto.setId(schedule.getId());
+		responseDto.setTitle(schedule.getTitle());
+		responseDto.setContent(schedule.getContent());
+		responseDto.setManager(schedule.getManager());
+		responseDto.setCreatedDate(schedule.getCreatedDate());
+
+		return responseDto;
 	}
 
-	@Transactional(readOnly = true)
-	public ScheduleResponseDto getScheduleById(Long id) {
-		Schedule schedule = findSchedule(id);
-		return new ScheduleResponseDto(schedule);
+	public List<ScheduleResponseDto> getAllSchedules() {
+		List<Schedule> schedules = scheduleRepository.findAll(Sort.by(Sort.Direction.DESC, "createdDate"));
+
+		return schedules.stream().map(schedule -> {
+			ScheduleResponseDto responseDto = new ScheduleResponseDto();
+			responseDto.setId(schedule.getId());
+			responseDto.setTitle(schedule.getTitle());
+			responseDto.setContent(schedule.getContent());
+			responseDto.setManager(schedule.getManager());
+			responseDto.setCreatedDate(schedule.getCreatedDate());
+			return responseDto;
+		}).collect(Collectors.toList());
 	}
 
-	@Transactional
-	public ScheduleResponseDto updateSchedule(Long id, String password, UpdateRequestDto requestDto) {
-		// 비밀번호 확인
-		if (!isValidPassword(id, password)) {
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+	public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto requestDto) {
+		Schedule schedule = scheduleRepository.findById(id)
+			.orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+		if (!schedule.getPassword().equals(requestDto.getPassword())) {
+			throw new RuntimeException("Password does not match");
 		}
-		// 일정 업데이트
-		Schedule schedule = findSchedule(id);
-		schedule.update(requestDto);
-		return new ScheduleResponseDto(schedule);
+
+		schedule.setTitle(requestDto.getTitle());
+		schedule.setContent(requestDto.getContent());
+		schedule.setManager(requestDto.getManager());
+
+		Schedule updatedSchedule = scheduleRepository.save(schedule);
+
+		ScheduleResponseDto responseDto = new ScheduleResponseDto();
+		responseDto.setId(updatedSchedule.getId());
+		responseDto.setTitle(updatedSchedule.getTitle());
+		responseDto.setContent(updatedSchedule.getContent());
+		responseDto.setManager(updatedSchedule.getManager());
+		responseDto.setCreatedDate(updatedSchedule.getCreatedDate());
+
+		return responseDto;
 	}
 
-	@Transactional
 	public void deleteSchedule(Long id, String password) {
-		// 비밀번호 확인
-		if (!isValidPassword(id, password)) {
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+		Schedule schedule = scheduleRepository.findById(id)
+			.orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+		if (!schedule.getPassword().equals(password)) {
+			throw new RuntimeException("Password does not match");
 		}
-		Schedule schedule = findSchedule(id);
+
 		scheduleRepository.delete(schedule);
-	}
-
-	@Transactional(readOnly = true)
-	private Schedule findSchedule(Long id) {
-		return scheduleRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("선택한 스케줄은 존재하지 않습니다"));
-	}
-
-	private boolean isValidPassword(Long id, String password) {
-		Schedule schedule = findSchedule(id);
-		return schedule.getPassword().equals(password);
 	}
 }
