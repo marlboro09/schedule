@@ -1,18 +1,16 @@
 package com.sparta.schedule.dto.requestdto;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Data
 public class LoginRequestDto {
 
-	@NotBlank
+	@NotEmpty
 	private String username;
 
-	@NotBlank
+	@NotEmpty
 	private String password;
 }

@@ -1,39 +1,43 @@
 package com.sparta.schedule.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.sparta.schedule.dto.requestdto.LoginRequestDto;
 import com.sparta.schedule.dto.requestdto.UserRequestDto;
-import com.sparta.schedule.dto.responsedto.LoginResponseDto;
 import com.sparta.schedule.entity.User;
+import com.sparta.schedule.entity.UserRoleEnum;
 import com.sparta.schedule.repository.UserRepository;
 
 @Service
 public class UserService {
 
+	@Value("${admin.token}")
+	private String adminToken;
+
 	@Autowired
 	private UserRepository userRepository;
 
+	private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 	public void register(UserRequestDto requestDto) {
-		userRepository.findByUsername(requestDto.getUsername())
-			.ifPresent(user -> {
-				throw new RuntimeException("중복된 username 입니다.");
-			});
+		if (userRepository.existsByUsername(requestDto.getUsername())) {
+			throw new RuntimeException("중복된 username 입니다.");
+		}
 
-		User user = new User();
+		UserRoleEnum role = UserRoleEnum.USER;
+		if (requestDto.isAdmin()) {
+			if (!adminToken.equals(requestDto.getAdminToken())) {
+				throw new RuntimeException("잘못된 관리자 토큰입니다.");
+			}
+			role = UserRoleEnum.ADMIN;
+		}
+
+		String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
+		User user = new User(requestDto.getUsername(), encodedPassword, role);
 		user.setNickname(requestDto.getNickname());
-		user.setUsername(requestDto.getUsername());
-		user.setPassword(requestDto.getPassword());
-		user.setRole("USER");
-		user.setCreatedDate(LocalDateTime.now());
-
 		userRepository.save(user);
-	}
-
-	public LoginResponseDto login(LoginRequestDto requestDto) {
-		return null;
 	}
 }

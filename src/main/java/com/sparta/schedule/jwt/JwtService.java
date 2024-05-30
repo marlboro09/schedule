@@ -1,46 +1,65 @@
 package com.sparta.schedule.jwt;
 
-import io.jsonwebtoken.*;
-import org.springframework.stereotype.Service;
-
+import java.security.Key;
 import java.util.Date;
+
+import javax.crypto.spec.SecretKeySpec;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class JwtService {
-	private static final String SECRET_KEY = "my_secret_key";
-	private static final long EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour
+
+	@Value("${jwt.secret}")
+	private String secretKey;
+
+	public static final String AUTHORIZATION_HEADER = "Authorization";
+
+	public static final String BEARER_PREFIX = "Bearer ";
+
+	private Key getSigningKey() {
+		byte[] keyBytes = secretKey.getBytes();
+		return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
+	}
 
 	public String createToken(String username, String role) {
+		Date now = new Date();
+		Date validity = new Date(now.getTime() + 3600000); // 1시간 유효
+
 		return Jwts.builder()
 			.setSubject(username)
 			.claim("role", role)
-			.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-			.signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes())
+			.setIssuedAt(now)
+			.setExpiration(validity)
+			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
 			.compact();
-	}
-
-	public Claims getClaims(String token) {
-		return Jwts.parserBuilder()
-			.setSigningKey(SECRET_KEY.getBytes())
-			.build()
-			.parseClaimsJws(token)
-			.getBody();
-	}
-
-	public boolean isTokenExpired(String token) {
-		return getClaims(token).getExpiration().before(new Date());
 	}
 
 	public boolean validateToken(String token) {
 		try {
-			Jwts.parserBuilder().setSigningKey(SECRET_KEY.getBytes()).build().parseClaimsJws(token);
+			Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
 			return true;
-		} catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
 
 	public Claims getUserInfoFromToken(String token) {
-		return getClaims(token);
+		return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+	}
+
+	public String getJwtFromHeader(HttpServletRequest request) {
+		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+			return bearerToken.substring(7);
+		}
+		return null;
 	}
 }

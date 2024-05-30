@@ -1,18 +1,26 @@
 package com.sparta.schedule.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
-import java.util.List;
+
+import com.sparta.schedule.dto.requestdto.ScheduleRequestDto;
+import com.sparta.schedule.dto.requestdto.UpdateRequestDto;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "schedule")
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 public class Schedule {
 
@@ -20,16 +28,32 @@ public class Schedule {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false)
 	private String title;
 
-	private String content;
+	@Column(nullable = false)
+	private String description;
 
-	private String manager;
+	@Column(nullable = false)
+	private String date;
 
-	private String password;
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-	private LocalDateTime createdDate;
+	private LocalDateTime createdAt = LocalDateTime.now();
 
-	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Comment> comments;
+	public Schedule(ScheduleRequestDto requestDto, User user) {
+		this.title = requestDto.getTitle();
+		this.description = requestDto.getDescription();
+		this.date = requestDto.getDate();
+		this.user = user;
+		this.createdAt = LocalDateTime.now();
+	}
+
+	public void update(UpdateRequestDto requestDto) {
+		this.title = requestDto.getTitle();
+		this.description = requestDto.getDescription();
+		this.date = requestDto.getDate();
+	}
 }

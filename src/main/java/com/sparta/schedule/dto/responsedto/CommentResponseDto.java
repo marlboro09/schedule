@@ -2,22 +2,32 @@ package com.sparta.schedule.dto.responsedto;
 
 import java.time.LocalDateTime;
 
-import lombok.Data;
+import com.sparta.schedule.entity.Comment;
+
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
-@Data
+@NoArgsConstructor
 public class CommentResponseDto {
-
 	private Long id;
 
-	private String content;
+	private String description;
 
 	private String userId;
 
+	private String nickname;
+
 	private Long scheduleId;
 
-	private LocalDateTime createdDate;
+	private LocalDateTime createdAt;
+
+	public CommentResponseDto(Comment comment) {
+		this.id = comment.getId();
+		this.description = comment.getDescription();
+		this.userId = comment.getUser().getUsername();
+		this.nickname = comment.getUser().getNickname();
+		this.scheduleId = comment.getSchedule().getId();
+		this.createdAt = comment.getCreatedAt();
+	}
 }

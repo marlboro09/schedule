@@ -1,9 +1,11 @@
 package com.sparta.schedule.dto.requestdto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class CommentUpdateRequestDto {
 
-	private String content;
+	private String description;
 }

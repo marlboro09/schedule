@@ -1,7 +1,5 @@
 package com.sparta.schedule.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +8,16 @@ import com.sparta.schedule.dto.requestdto.CommentUpdateRequestDto;
 import com.sparta.schedule.dto.responsedto.CommentResponseDto;
 import com.sparta.schedule.entity.Comment;
 import com.sparta.schedule.entity.Schedule;
+import com.sparta.schedule.entity.User;
+import com.sparta.schedule.exception.NotFoundException;
 import com.sparta.schedule.repository.CommentRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
 
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class CommentService {
 
 	@Autowired
@@ -22,57 +26,59 @@ public class CommentService {
 	@Autowired
 	private ScheduleRepository scheduleRepository;
 
-	public CommentResponseDto addComment(CommentRequestDto requestDto) {
+	@Transactional
+	public CommentResponseDto addComment(CommentRequestDto requestDto, User user) {
 		Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
-			.orElseThrow(() -> new RuntimeException("Schedule not found"));
+			.orElseThrow(() -> new NotFoundException("스케줄을 찾을 수 없습니다."));
 
-		Comment comment = new Comment();
-		comment.setContent(requestDto.getContent());
-		comment.setUserId(requestDto.getUserId());
-		comment.setCreatedDate(LocalDateTime.now());
-		comment.setSchedule(schedule);
+		Comment comment = new Comment(requestDto.getDescription(), schedule, user);
 
-		Comment savedComment = commentRepository.save(comment);
-
-		CommentResponseDto responseDto = new CommentResponseDto();
-		responseDto.setId(savedComment.getId());
-		responseDto.setContent(savedComment.getContent());
-		responseDto.setUserId(savedComment.getUserId());
-		responseDto.setScheduleId(savedComment.getSchedule().getId());
-		responseDto.setCreatedDate(savedComment.getCreatedDate());
-
-		return responseDto;
+		try {
+			Comment savedComment = commentRepository.save(comment);
+			return new CommentResponseDto(savedComment);
+		} catch (Exception e) {
+			log.error("댓글 저장 중 오류 발생: ", e);
+			throw new RuntimeException("댓글 저장에 실패했습니다.");
+		}
 	}
 
-	public CommentResponseDto updateComment(Long commentId, String currentUser, CommentUpdateRequestDto requestDto) {
+	@Transactional
+	public CommentResponseDto updateComment(Long commentId, User user, CommentUpdateRequestDto requestDto) {
+		log.debug("댓글 수정 중: ID: {}", commentId);
 		Comment comment = commentRepository.findById(commentId)
-			.orElseThrow(() -> new RuntimeException("Comment not found"));
+			.orElseThrow(() -> new NotFoundException("댓글을 찾지 못했습니다."));
 
-		if (!comment.getUserId().equals(currentUser)) {
-			throw new RuntimeException("User not authorized to update this comment");
+		if (!comment.getUser().equals(user)) {
+			log.error("사용자 {}는 댓글 {}을(를) 수정할 권한이 없습니다.", user.getUsername(), commentId);
+			throw new RuntimeException("댓글 수정 권한이 없습니다.");
 		}
 
-		comment.setContent(requestDto.getContent());
-		Comment updatedComment = commentRepository.save(comment);
-
-		CommentResponseDto responseDto = new CommentResponseDto();
-		responseDto.setId(updatedComment.getId());
-		responseDto.setContent(updatedComment.getContent());
-		responseDto.setUserId(updatedComment.getUserId());
-		responseDto.setScheduleId(updatedComment.getSchedule().getId());
-		responseDto.setCreatedDate(updatedComment.getCreatedDate());
-
-		return responseDto;
+		comment.setDescription(requestDto.getDescription());
+		try {
+			Comment updatedComment = commentRepository.save(comment);
+			return new CommentResponseDto(updatedComment);
+		} catch (Exception e) {
+			log.error("댓글 수정 중 오류 발생: ", e);
+			throw new RuntimeException("댓글 수정에 실패했습니다.");
+		}
 	}
 
-	public void deleteComment(Long commentId, String currentUser) {
+	@Transactional
+	public void deleteComment(Long commentId, User user) {
+		log.debug("댓글 삭제 중: ID: {}", commentId);
 		Comment comment = commentRepository.findById(commentId)
-			.orElseThrow(() -> new RuntimeException("Comment not found"));
+			.orElseThrow(() -> new NotFoundException("댓글을 찾지 못했습니다."));
 
-		if (!comment.getUserId().equals(currentUser)) {
-			throw new RuntimeException("User not authorized to delete this comment");
+		if (!comment.getUser().equals(user)) {
+			log.error("사용자 {}는 댓글 {}을(를) 삭제할 권한이 없습니다.", user.getUsername(), commentId);
+			throw new RuntimeException("댓글 삭제 권한이 없습니다.");
 		}
 
-		commentRepository.delete(comment);
+		try {
+			commentRepository.delete(comment);
+		} catch (Exception e) {
+			log.error("댓글 삭제 중 오류 발생: ", e);
+			throw new RuntimeException("댓글 삭제에 실패했습니다.");
+		}
 	}
 }

@@ -1,15 +1,14 @@
 package com.sparta.schedule.jwt;
 
-import com.sparta.schedule.jwt.JwtService;
-import io.jsonwebtoken.Claims;
+import java.io.IOException;
+
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
 
 public class JwtFilter extends OncePerRequestFilter {
 
