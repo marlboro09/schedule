@@ -21,7 +21,7 @@ public class SwaggerConfig {
 			.info(new Info()
 				.title("Schedule API")
 				.version("1.0.0")
-				.description("API documentation for Schedule application"));
+				.description("회원가입과 로그인을 하여 스케줄을 관리 댓글 관리를 할 수 있습니다."));
 	}
 
 	@Bean
