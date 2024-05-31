@@ -48,8 +48,8 @@ public class CommentService {
 		Comment comment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new NotFoundException("댓글을 찾지 못했습니다."));
 
-		if (!comment.getUser().equals(user)) {
-			log.error("사용자 {}는 댓글 {}을(를) 수정할 권한이 없습니다.", user.getUsername(), commentId);
+		if (!comment.getUser().getId().equals(user.getId()) && !user.isAdmin()) {
+			log.error("댓글을 수정할 권한이 없습니다.", user.getUsername(), commentId);
 			throw new RuntimeException("댓글 수정 권한이 없습니다.");
 		}
 
@@ -69,8 +69,8 @@ public class CommentService {
 		Comment comment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new NotFoundException("댓글을 찾지 못했습니다."));
 
-		if (!comment.getUser().equals(user)) {
-			log.error("사용자 {}는 댓글 {}을(를) 삭제할 권한이 없습니다.", user.getUsername(), commentId);
+		if (!comment.getUser().getId().equals(user.getId()) && !user.isAdmin()) {
+			log.error("댓글을 삭제할 권한이 없습니다.", user.getUsername(), commentId);
 			throw new RuntimeException("댓글 삭제 권한이 없습니다.");
 		}
 

@@ -52,12 +52,12 @@ public class ScheduleService {
 
 	@Transactional
 	public ScheduleResponseDto updateSchedule(Long id, UpdateRequestDto requestDto, User user) {
-		log.debug("스케줄 수정 중: ID: {}", id);
+		log.debug("스케줄 수정 ID: {}", id);
 		Schedule schedule = scheduleRepository.findById(id)
 			.orElseThrow(() -> new NotFoundException("스케줄을 찾을 수 없습니다."));
 
-		if (!schedule.getUser().equals(user)) {
-			log.error("사용자 {}는 스케줄 {}을(를) 수정할 권한이 없습니다.", user.getUsername(), id);
+		if (!schedule.getUser().getId().equals(user.getId()) && !user.isAdmin()) {
+			log.error("스케줄을 수정할 권한이 없습니다.", user.getUsername(), id);
 			throw new IllegalArgumentException("스케줄 수정 권한이 없습니다.");
 		}
 
@@ -76,8 +76,8 @@ public class ScheduleService {
 		Schedule schedule = scheduleRepository.findById(id)
 			.orElseThrow(() -> new NotFoundException("스케줄을 찾을 수 없습니다."));
 
-		if (!schedule.getUser().equals(user)) {
-			log.error("사용자 {}는 스케줄 {}을(를) 삭제할 권한이 없습니다.", user.getUsername(), id);
+		if (!schedule.getUser().getId().equals(user.getId()) && !user.isAdmin()) {
+			log.error("스케줄을 삭제할 권한이 없습니다.", user.getUsername(), id);
 			throw new IllegalArgumentException("스케줄 삭제 권한이 없습니다.");
 		}
 

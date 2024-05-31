@@ -10,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class User {
 
 	@Id
@@ -59,5 +57,9 @@ public class User {
 
 	public UserRoleEnum getRole() {
 		return role;
+	}
+
+	public boolean isAdmin() {
+		return this.role == UserRoleEnum.ADMIN;
 	}
 }
