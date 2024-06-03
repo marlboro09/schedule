@@ -15,7 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ScheduleService {
 
 	@Autowired
@@ -30,6 +33,7 @@ public class ScheduleService {
 			.orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 		Schedule schedule = new Schedule(requestDto, persistentUser);
 		Schedule savedSchedule = scheduleRepository.save(schedule);
+		log.info("Schedule saved: {}", savedSchedule);
 		return new ScheduleResponseDto(savedSchedule);
 	}
 
@@ -44,6 +48,7 @@ public class ScheduleService {
 
 		schedule.update(requestDto);
 		Schedule updatedSchedule = scheduleRepository.save(schedule);
+		log.info("Schedule updated: {}", updatedSchedule);
 		return new ScheduleResponseDto(updatedSchedule);
 	}
 
@@ -57,6 +62,7 @@ public class ScheduleService {
 		}
 
 		scheduleRepository.delete(schedule);
+		log.info("Schedule deleted: {}", schedule);
 	}
 
 	@Transactional(readOnly = true)
