@@ -33,7 +33,7 @@ public class ScheduleService {
 			.orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 		Schedule schedule = new Schedule(requestDto, persistentUser);
 		Schedule savedSchedule = scheduleRepository.save(schedule);
-		log.info("Schedule saved: {}", savedSchedule);
+		log.info("스케줄 저장: {}", savedSchedule);
 		return new ScheduleResponseDto(savedSchedule);
 	}
 
@@ -48,7 +48,7 @@ public class ScheduleService {
 
 		schedule.update(requestDto);
 		Schedule updatedSchedule = scheduleRepository.save(schedule);
-		log.info("Schedule updated: {}", updatedSchedule);
+		log.info("스케줄 수정: {}", updatedSchedule);
 		return new ScheduleResponseDto(updatedSchedule);
 	}
 
@@ -62,7 +62,7 @@ public class ScheduleService {
 		}
 
 		scheduleRepository.delete(schedule);
-		log.info("Schedule deleted: {}", schedule);
+		log.info("스케줄 삭제: {}", schedule);
 	}
 
 	@Transactional(readOnly = true)
@@ -83,5 +83,11 @@ public class ScheduleService {
 		User persistentUser = userRepository.findById(user.getId())
 			.orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 		return !schedule.getUser().equals(persistentUser) && !persistentUser.isAdmin();
+	}
+
+	@Transactional(readOnly = true)
+	public Schedule getScheduleById(Long id) {
+		return scheduleRepository.findById(id)
+			.orElseThrow(() -> new NotFoundException("스케줄을 찾을 수 없습니다."));
 	}
 }
