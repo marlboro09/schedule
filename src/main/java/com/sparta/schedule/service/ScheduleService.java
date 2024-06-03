@@ -24,7 +24,6 @@ public class ScheduleService {
 	@Autowired
 	private ScheduleRepository scheduleRepository;
 
-	@Transactional
 	public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto, User user) {
 		Schedule schedule = new Schedule(requestDto, user);
 		try {
@@ -36,21 +35,18 @@ public class ScheduleService {
 		}
 	}
 
-	@Transactional(readOnly = true)
 	public ScheduleResponseDto getSchedule(Long id) {
 		Schedule schedule = scheduleRepository.findById(id)
 			.orElseThrow(() -> new NotFoundException("스케줄을 찾을 수 없습니다."));
 		return new ScheduleResponseDto(schedule);
 	}
 
-	@Transactional(readOnly = true)
 	public List<ScheduleResponseDto> getAllSchedules() {
 		return scheduleRepository.findAllByOrderByDateDesc().stream()
 			.map(ScheduleResponseDto::new)
 			.collect(Collectors.toList());
 	}
 
-	@Transactional
 	public ScheduleResponseDto updateSchedule(Long id, UpdateRequestDto requestDto, User user) {
 		log.debug("스케줄 수정 ID: {}", id);
 		Schedule schedule = scheduleRepository.findById(id)
@@ -70,7 +66,6 @@ public class ScheduleService {
 		}
 	}
 
-	@Transactional
 	public void deleteSchedule(Long id, User user) {
 		log.debug("스케줄 삭제 중: ID: {}", id);
 		Schedule schedule = scheduleRepository.findById(id)

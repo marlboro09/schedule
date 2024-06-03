@@ -26,7 +26,6 @@ public class CommentService {
 	@Autowired
 	private ScheduleRepository scheduleRepository;
 
-	@Transactional
 	public CommentResponseDto addComment(CommentRequestDto requestDto, User user) {
 		Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
 			.orElseThrow(() -> new NotFoundException("스케줄을 찾을 수 없습니다."));
@@ -42,7 +41,6 @@ public class CommentService {
 		}
 	}
 
-	@Transactional
 	public CommentResponseDto updateComment(Long commentId, User user, CommentUpdateRequestDto requestDto) {
 		log.debug("댓글 수정 중: ID: {}", commentId);
 		Comment comment = commentRepository.findById(commentId)
@@ -63,7 +61,6 @@ public class CommentService {
 		}
 	}
 
-	@Transactional
 	public void deleteComment(Long commentId, User user) {
 		log.debug("댓글 삭제 중: ID: {}", commentId);
 		Comment comment = commentRepository.findById(commentId)
