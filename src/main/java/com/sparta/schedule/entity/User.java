@@ -47,18 +47,6 @@ public class User {
 		this.createdAt = LocalDateTime.now();
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public UserRoleEnum getRole() {
-		return role;
-	}
-
 	public boolean isAdmin() {
 		return this.role == UserRoleEnum.ADMIN;
 	}
