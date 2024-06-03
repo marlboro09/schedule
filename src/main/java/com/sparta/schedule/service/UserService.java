@@ -23,8 +23,8 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	public void register(UserRequestDto requestDto) {
-		if (userRepository.existsByUsername(requestDto.getUsername())) {
-			throw new RuntimeException("중복된 username 입니다.");
+		if (userRepository.existsByUsername(requestDto.getNickname())) {
+			throw new RuntimeException("중복된 nickname 입니다.");
 		}
 
 		UserRoleEnum role = UserRoleEnum.USER;

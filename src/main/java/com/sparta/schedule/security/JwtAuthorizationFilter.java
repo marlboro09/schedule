@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.sparta.schedule.jwt.JwtService;
+import com.sparta.schedule.service.JwtService;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

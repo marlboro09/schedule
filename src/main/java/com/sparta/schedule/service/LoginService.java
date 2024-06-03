@@ -9,7 +9,6 @@ import com.sparta.schedule.dto.requestdto.LoginRequestDto;
 import com.sparta.schedule.dto.responsedto.LoginResponseDto;
 import com.sparta.schedule.entity.User;
 import com.sparta.schedule.exception.NotFoundException;
-import com.sparta.schedule.jwt.JwtService;
 import com.sparta.schedule.repository.UserRepository;
 
 @Service

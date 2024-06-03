@@ -16,7 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.sparta.schedule.jwt.JwtService;
+import com.sparta.schedule.service.JwtService;
 import com.sparta.schedule.security.JwtAuthenticationFilter;
 import com.sparta.schedule.security.JwtAuthorizationFilter;
 import com.sparta.schedule.security.UserDetailsServiceImpl;

@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.schedule.dto.requestdto.LoginRequestDto;
 import com.sparta.schedule.entity.UserRoleEnum;
-import com.sparta.schedule.jwt.JwtService;
+import com.sparta.schedule.service.JwtService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

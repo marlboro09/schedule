@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.sparta.schedule.jwt.JwtFilter;
-import com.sparta.schedule.jwt.JwtService;
+import com.sparta.schedule.service.JwtService;
 
 @Configuration
 public class FilterConfig {

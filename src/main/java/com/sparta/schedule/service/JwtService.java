@@ -1,4 +1,4 @@
-package com.sparta.schedule.jwt;
+package com.sparta.schedule.service;
 
 import java.security.Key;
 import java.util.Date;
